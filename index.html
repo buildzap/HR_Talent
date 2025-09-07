@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Talent Matching AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontSize: {
+                        'xs': '0.7rem',
+                        'sm': '0.8rem',
+                        'base': '0.85rem',
+                        'lg': '0.9rem',
+                        'xl': '1rem',
+                        '2xl': '1.1rem',
+                        '3xl': '1.25rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        }
+        .gradient-bg-dark {
+            background: linear-gradient(135deg, #1e40af 0%, #312e81 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Dark theme custom styles */
+        .dark {
+            color-scheme: dark;
+        }
+        
+        /* Theme-aware text colors */
+        .text-theme-primary {
+            @apply text-gray-900 dark:text-gray-100;
+        }
+        
+        .text-theme-secondary {
+            @apply text-gray-600 dark:text-gray-300;
+        }
+        
+        .text-theme-muted {
+            @apply text-gray-500 dark:text-gray-400;
+        }
+        
+        .bg-theme-primary {
+            @apply bg-white dark:bg-gray-900;
+        }
+        
+        .bg-theme-secondary {
+            @apply bg-gray-50 dark:bg-gray-800;
+        }
+        
+        .bg-theme-accent {
+            @apply bg-blue-50 dark:bg-blue-900/20;
+        }
+        
+        .border-theme {
+            @apply border-gray-200 dark:border-gray-700;
+        }
+        
+        .shadow-theme {
+            @apply shadow-md dark:shadow-2xl;
+        }
+        
+        /* Dark theme button styles */
+        .btn-primary {
+            @apply bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white;
+        }
+        
+        .btn-secondary {
+            @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200;
+        }
+        
+        /* Dark theme input styles */
+        .input-theme {
+            @apply bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400;
+        }
+        
+        /* Footer positioning for specific sections */
+        .footer-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: 0.5rem 0; /* Reduced padding for fixed footer */
+            margin-top: 0; /* Remove margin when fixed */
+        }
+        
+        .footer-bottom .container {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+        
+        .footer-bottom p {
+            margin: 0;
+            line-height: 1.2;
+        }
+        
+        .content-with-footer {
+            padding-bottom: 100px; /* Space for fixed footer - increased for Match History visibility */
+        }
+        
+        /* Specific styling for Match History section */
+        #matchHistoryTable {
+            margin-bottom: 2rem; /* Extra margin for Match History table */
+        }
+        
+        /* Ensure Match History container has proper spacing */
+        #matchHistory {
+            margin-bottom: 3rem; /* Extra margin for Match History section */
+        }
+        
+        /* Search Employee section specific styling */
+        #searchSection {
+            padding-bottom: 2rem; /* Extra padding for Search Employee section */
+        }
+        
+        /* Search result container spacing */
+        #searchResult {
+            margin-bottom: 2rem; /* Extra margin for search results */
+        }
+        
+        /* Match Results section specific styling */
+        #matchSection {
+            padding-bottom: 2rem; /* Extra padding for Match Results section */
+        }
+        
+        /* Career Path section specific styling */
+        #careerSection {
+            padding-bottom: 2rem; /* Extra padding for Career Path section */
+        }
+        
+        /* 3D Border Effects */
+        .border-3d {
+            border: 2px solid;
+            border-color: #e5e7eb #d1d5db #9ca3af #d1d5db;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .border-3d-dark {
+            border: 2px solid;
+            border-color: #374151 #1f2937 #111827 #1f2937;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.3),
+                0 2px 4px -1px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        
+        .border-3d-inset {
+            border: 2px solid;
+            border-color: #9ca3af #e5e7eb #d1d5db #e5e7eb;
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .border-3d-inset-dark {
+            border: 2px solid;
+            border-color: #111827 #374151 #1f2937 #374151;
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Enhanced Card Styles */
+        .card-3d {
+            @apply border-3d dark:border-3d-dark;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            transition: all 0.3s ease;
+        }
+        
+        .card-3d-dark {
+            @apply border-3d-dark;
+            background: linear-gradient(145deg, #1f2937, #111827);
+            transition: all 0.3s ease;
+        }
+        
+        .card-3d:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 10px 25px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-3d-dark:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 10px 25px -3px rgba(0, 0, 0, 0.4),
+                0 4px 6px -2px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Section Container Styles */
+        .section-container {
+            @apply bg-theme-primary border-3d dark:border-3d-dark rounded-xl shadow-theme p-6 mb-6;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+        }
+        
+        .section-container-dark {
+            @apply bg-theme-primary border-3d-dark rounded-xl shadow-theme p-6 mb-6;
+            background: linear-gradient(145deg, #1f2937, #111827);
+        }
+        
+        /* Form Container Styles */
+        .form-container {
+            @apply bg-theme-secondary border-3d-inset dark:border-3d-inset-dark rounded-lg p-6;
+            background: linear-gradient(145deg, #f9fafb, #f3f4f6);
+        }
+        
+        .form-container-dark {
+            @apply bg-theme-secondary border-3d-inset-dark rounded-lg p-6;
+            background: linear-gradient(145deg, #374151, #1f2937);
+        }
+        
+        /* Table Styles */
+        .table-3d {
+            @apply border-3d dark:border-3d-dark rounded-lg overflow-hidden;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+        }
+        
+        .table-3d-dark {
+            @apply border-3d-dark rounded-lg overflow-hidden;
+            background: linear-gradient(145deg, #1f2937, #111827);
+        }
+        
+        /* Button 3D Effects */
+        .btn-3d {
+            @apply border-3d dark:border-3d-dark;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-3d:hover {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-3d:active {
+            transform: translateY(0);
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Input 3D Effects */
+        .input-3d {
+            @apply border-3d-inset dark:border-3d-inset-dark;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            transition: all 0.2s ease;
+        }
+        
+        .input-3d-dark {
+            @apply border-3d-inset-dark;
+            background: linear-gradient(145deg, #374151, #1f2937);
+            transition: all 0.2s ease;
+        }
+        
+        .input-3d:focus {
+            @apply border-3d dark:border-3d-dark;
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .input-3d-dark:focus {
+            @apply border-3d-dark;
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <!-- Theme Toggle Button -->
+    <div class="fixed top-4 right-4 z-50">
+        <button id="themeToggle" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-2 shadow-lg hover:shadow-xl transition-all duration-300">
+            <svg id="sunIcon" class="w-5 h-5 text-gray-600 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+            </svg>
+            <svg id="moonIcon" class="w-5 h-5 text-gray-300 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="gradient-bg dark:gradient-bg-dark text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <h1 class="text-2xl font-bold text-center">🧠 HR Talent Matching AI</h1>
+            <p class="text-center mt-1 text-blue-100 text-sm">AI-powered talent matching and development system</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center mb-6">
+            <div class="section-container p-2">
+                <div class="flex space-x-1">
+                    <button id="searchTab" class="px-4 py-2 rounded-lg font-medium transition-all text-sm text-theme-secondary hover:text-theme-primary btn-3d">
+                        🔍 Search Employee
+                </button>
+                    <button id="uploadTab" class="px-4 py-2 rounded-lg font-medium transition-all text-sm btn-primary btn-3d">
+                        📄 Upload Resume
+                </button>
+                    <button id="matchTab" class="px-4 py-2 rounded-lg font-medium transition-all text-sm text-theme-secondary hover:text-theme-primary btn-3d">
+                        🎯 View Matches
+                    </button>
+                    <button id="careerTab" class="px-4 py-2 rounded-lg font-medium transition-all text-sm text-theme-secondary hover:text-theme-primary btn-3d">
+                        🚀 Career Path
+                    </button>
+                    <button id="projectTab" class="px-4 py-2 rounded-lg font-medium transition-all text-sm text-theme-secondary hover:text-theme-primary btn-3d">
+                        📋 Add Project
+                </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Resume Section -->
+        <div id="uploadSection" class="max-w-4xl mx-auto">
+            <div class="section-container">
+                <h2 class="text-xl font-bold mb-6 text-theme-primary flex items-center">
+                    <span class="mr-2">📄</span> Upload Resume
+                </h2>
+                <div class="form-container">
+                <form id="resumeForm" class="space-y-4">
+                    <div>
+                        <label for="employeeName" class="block text-sm font-medium text-theme-primary mb-2">
+                            Employee Name
+                        </label>
+                        <input type="text" id="employeeName" name="name" required
+                               class="w-full px-3 py-2 input-3d rounded-md focus:outline-none text-sm"
+                               placeholder="Enter employee name">
+                    </div>
+                    
+                    <div>
+                        <label for="resumeText" class="block text-sm font-medium text-theme-primary mb-2">
+                            Resume Text
+                        </label>
+                        <textarea id="resumeText" name="resume_text" required rows="8"
+                                  class="w-full px-3 py-2 input-3d rounded-md focus:outline-none text-sm"
+                                  placeholder="Paste the complete resume text here..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="preferences" class="block text-sm font-medium text-theme-primary mb-2">
+                            Work Preferences (Optional)
+                        </label>
+                        <input type="text" id="preferences" name="preferences"
+                               class="w-full px-3 py-2 input-3d rounded-md focus:outline-none text-sm"
+                               placeholder="e.g., remote work, frontend development, team leadership">
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full btn-primary btn-3d py-2 px-4 rounded-md transition-all font-medium text-sm">
+                        🚀 Process Resume & Find Matches
+                    </button>
+                </form>
+                </div>
+                
+                <!-- Loading indicator -->
+                <div id="uploadLoading" class="hidden mt-4 text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                    <p class="mt-2 text-gray-600">Processing resume and generating matches...</p>
+                </div>
+                
+                <!-- Upload result -->
+                <div id="uploadResult" class="hidden mt-4 p-4 rounded-md"></div>
+            </div>
+        </div>
+
+        <!-- Match Results Section -->
+        <div id="matchSection" class="hidden max-w-6xl mx-auto">
+            <div class="section-container">
+                <h2 class="text-xl font-bold mb-6 text-theme-primary flex items-center">
+                    <span class="mr-2">🎯</span> Project Matches
+                </h2>
+                
+                <!-- Employee Info -->
+                <div id="employeeInfo" class="hidden mb-6">
+                    <div class="form-container">
+                        <h3 class="font-semibold text-blue-800 dark:text-blue-200 text-sm mb-3">👤 Employee Information</h3>
+                        <div id="employeeDetails" class="text-blue-700 dark:text-blue-300 text-sm"></div>
+                    </div>
+                </div>
+                
+                <!-- Matches Container -->
+                <div id="matchesContainer" class="space-y-4">
+                    <p class="text-theme-muted text-center text-sm">Upload a resume to see project matches</p>
+                </div>
+                
+                <!-- Skill Gap Analysis -->
+                <div id="skillGapSection" class="hidden mt-6">
+                    <h3 class="text-lg font-bold mb-4 text-theme-primary flex items-center">
+                        <span class="mr-2">📊</span> Skill Gap Analysis
+                    </h3>
+                    <div id="skillGapContent" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-container border-red-200 dark:border-red-800">
+                            <h4 class="font-semibold text-red-800 dark:text-red-200 mb-3 text-sm flex items-center">
+                                <span class="mr-2">❌</span> Missing Skills
+                            </h4>
+                            <div id="missingSkills" class="text-red-700 dark:text-red-300 text-sm"></div>
+                        </div>
+                        <div class="form-container border-green-200 dark:border-green-800">
+                            <h4 class="font-semibold text-green-800 dark:text-green-200 mb-3 text-sm flex items-center">
+                                <span class="mr-2">✅</span> Matched Skills
+                            </h4>
+                            <div id="matchedSkills" class="text-green-700 dark:text-green-300 text-sm"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recommended Courses -->
+                <div id="coursesSection" class="hidden mt-6">
+                    <h3 class="text-lg font-bold mb-4 text-theme-primary flex items-center">
+                        <span class="mr-2">📚</span> Recommended Training
+                    </h3>
+                    <div id="coursesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Career Path Section -->
+        <div id="careerSection" class="hidden max-w-6xl mx-auto">
+            <div class="section-container">
+                <h2 class="text-xl font-bold mb-6 text-theme-primary flex items-center">
+                    <span class="mr-2">🚀</span> Career Path Analysis
+                </h2>
+                
+                <div id="careerContent" class="space-y-6">
+                    <div class="form-container text-center">
+                        <p class="text-theme-muted text-sm">Upload a resume to see career path suggestions</p>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Project Requirements Section -->
+        <div id="projectSection" class="hidden max-w-6xl mx-auto">
+            <div class="section-container">
+                <h2 class="text-xl font-bold mb-6 text-theme-primary flex items-center">
+                    <span class="mr-2">📋</span> Project Management (HR)
+                </h2>
+                
+                <!-- Add/Edit Project Form -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold mb-4 text-theme-primary flex items-center">
+                        <span id="formTitle">➕ Add New Project</span>
+                    </h3>
+                    <div class="form-container">
+                        <form id="projectForm" class="space-y-4">
+                        <!-- Hidden field for project ID when editing -->
+                        <input type="hidden" id="projectId" name="project_id">
+                    <div>
+                        <label for="projectTitle" class="block text-sm font-medium text-theme-primary mb-2">
+                            Project Title
+                        </label>
+                        <input type="text" id="projectTitle" name="title" required
+                               class="w-full px-3 py-2 input-3d rounded-md focus:outline-none text-sm"
+                               placeholder="Enter project title">
+                    </div>
+                    
+                    <div>
+                        <label for="projectDescription" class="block text-sm font-medium text-theme-primary mb-2">
+                            Project Description
+                        </label>
+                        <textarea id="projectDescription" name="description" required rows="3"
+                                  class="w-full px-3 py-2 input-3d rounded-md focus:outline-none text-sm"
+                                  placeholder="Describe the project requirements, goals, and scope..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="requiredSkills" class="block text-sm font-medium text-theme-primary mb-2">
+                            Required Skills
+                        </label>
+                        <input type="text" id="requiredSkills" name="required_skills" required
+                               class="w-full px-3 py-2 input-3d rounded-md focus:outline-none text-sm"
+                               placeholder="e.g., Python, React, Machine Learning, Project Management">
+                        <p class="text-xs text-theme-muted mt-1">Separate multiple skills with commas</p>
+                    </div>
+                    
+                    <div>
+                        <label for="teamSize" class="block text-sm font-medium text-theme-primary mb-2">
+                            Team Size
+                        </label>
+                        <input type="number" id="teamSize" name="team_size" required min="1"
+                               class="w-full px-3 py-2 input-3d rounded-md focus:outline-none text-sm"
+                               placeholder="Number of team members needed">
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button type="submit" 
+                                class="flex-1 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white py-2 px-4 rounded-md transition-all font-medium text-sm btn-3d">
+                            <span id="submitButtonText">➕ Add Project</span>
+                        </button>
+                        <button type="button" id="cancelEdit" 
+                                class="hidden btn-secondary btn-3d py-2 px-4 rounded-md transition-all font-medium text-sm">
+                            ❌ Cancel Edit
+                        </button>
+                    </div>
+                    </form>
+                </div>
+                
+                <!-- Loading indicator -->
+                <div id="projectLoading" class="hidden mt-4 text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+                    <p class="mt-2 text-gray-600">Adding project to system...</p>
+                </div>
+                
+                <!-- Project result -->
+                <div id="projectResult" class="hidden mt-4 p-4 rounded-md"></div>
+                </div>
+                
+                <!-- Project History Section -->
+                <div class="border-t pt-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">📚 Project History</h3>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <!-- Search and Filter Controls -->
+                        <div class="mb-6 space-y-4">
+                            <div class="flex flex-col lg:flex-row gap-4">
+                                <!-- Search by Project Name -->
+                                <div class="flex-1">
+                                    <label for="projectNameFilter" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Search by Project Name
+                                    </label>
+                                    <input type="text" id="projectNameFilter" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                           placeholder="Enter project name...">
+                                </div>
+                                
+                                <!-- Filter by Skills -->
+                                <div class="flex-1">
+                                    <label for="skillFilter" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Filter by Skills
+                                    </label>
+                                    <input type="text" id="skillFilter" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                           placeholder="Enter skills (comma-separated)...">
+                                </div>
+                                
+                                <!-- Filter by Team Size -->
+                                <div class="w-full lg:w-32">
+                                    <label for="teamSizeFilter" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Team Size
+                                    </label>
+                                    <select id="teamSizeFilter" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                        <option value="">All Sizes</option>
+                                        <option value="1">1 member</option>
+                                        <option value="2-5">2-5 members</option>
+                                        <option value="6-10">6-10 members</option>
+                                        <option value="10+">10+ members</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex flex-wrap gap-2">
+                                <button id="applyFilters" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors text-sm">
+                                    🔍 Apply Filters
+                                </button>
+                                <button id="clearFilters" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors text-sm">
+                                    🗑️ Clear Filters
+                                </button>
+                                <button id="refreshProjects" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors text-sm">
+                                    🔄 Refresh
+                                </button>
+                            </div>
+                            
+                            <!-- Filter Results Summary -->
+                            <div id="filterSummary" class="hidden text-sm text-gray-600 bg-white p-2 rounded border">
+                                <span id="filterResultsText"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Loading indicator for projects -->
+                        <div id="projectsLoading" class="hidden text-center">
+                            <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                            <p class="mt-2 text-gray-600 text-sm">Loading projects...</p>
+                        </div>
+                        
+                        <!-- Projects list -->
+                        <div id="projectsList" class="space-y-2">
+                            <p class="text-gray-500 text-center">Loading projects...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Employee Section -->
+        <div id="searchSection" class="hidden max-w-6xl mx-auto">
+            <div class="section-container">
+                <h2 class="text-xl font-bold mb-6 text-theme-primary flex items-center">
+                    <span class="mr-2">🔍</span> Search Employee by ID
+                </h2>
+                
+                <!-- Search Form -->
+                <div class="mb-6">
+                    <div class="form-container">
+                        <form id="searchForm" class="flex gap-4 items-end">
+                            <div class="flex-1">
+                                <label for="employeeId" class="block text-sm font-medium text-theme-primary mb-2">
+                                    Employee ID
+                                </label>
+                                <input type="number" id="employeeId" name="employee_id" required min="1"
+                                       class="w-full px-3 py-2 input-3d rounded-md focus:outline-none text-sm"
+                                       placeholder="Enter employee ID">
+                            </div>
+                            <button type="submit" 
+                                    class="btn-primary btn-3d py-2 px-6 rounded-md transition-all font-medium text-sm">
+                                🔍 Search
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Loading indicator -->
+                <div id="searchLoading" class="hidden text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                    <p class="mt-2 text-gray-600">Searching for employee...</p>
+                </div>
+                
+                <!-- Search result -->
+                <div id="searchResult" class="hidden">
+                    <!-- Employee Profile Section -->
+                    <div id="employeeProfile" class="hidden mb-8">
+                        <h3 class="text-lg font-bold mb-4 text-theme-primary flex items-center">
+                            <span class="mr-2">👤</span> Employee Profile
+                        </h3>
+                        <div class="form-container">
+                            <div id="employeeDetails" class="space-y-3"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Match History Section -->
+                    <div id="matchHistory" class="hidden">
+                        <h3 class="text-lg font-bold mb-4 text-theme-primary flex items-center">
+                            <span class="mr-2">📊</span> Match History
+                        </h3>
+                        <div id="matchHistoryTable" class="overflow-x-auto">
+                            <!-- Match history table will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error message -->
+                <div id="searchError" class="hidden mt-4 p-4 rounded-md"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-3 mt-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-xs">&copy; 2025 HR Talent Matching AI - Local & Open Source</p>
+            <p class="text-gray-400 text-xs mt-1">Built with FastAPI, ChromaDB, and SentenceTransformers</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        function initTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            const html = document.documentElement;
+            
+            // Check for saved theme preference or default to 'light'
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            html.classList.toggle('dark', currentTheme === 'dark');
+            
+            themeToggle.addEventListener('click', () => {
+                const isDark = html.classList.contains('dark');
+                html.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            });
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', initTheme);
+
+        // Global variables
+        let currentEmployeeId = null;
+        let currentEmployeeData = null;
+
+        // Tab switching
+        document.getElementById('uploadTab').addEventListener('click', () => switchTab('upload'));
+        document.getElementById('matchTab').addEventListener('click', () => switchTab('match'));
+        document.getElementById('careerTab').addEventListener('click', () => switchTab('career'));
+        document.getElementById('projectTab').addEventListener('click', () => switchTab('project'));
+        document.getElementById('searchTab').addEventListener('click', () => switchTab('search'));
+
+        function switchTab(tab) {
+            // Hide all sections
+            document.getElementById('uploadSection').classList.add('hidden');
+            document.getElementById('matchSection').classList.add('hidden');
+            document.getElementById('careerSection').classList.add('hidden');
+            document.getElementById('projectSection').classList.add('hidden');
+            document.getElementById('searchSection').classList.add('hidden');
+            
+            // Remove active class from all tabs
+            document.getElementById('uploadTab').classList.remove('btn-primary');
+            document.getElementById('uploadTab').classList.add('text-theme-secondary');
+            document.getElementById('matchTab').classList.remove('btn-primary');
+            document.getElementById('matchTab').classList.add('text-theme-secondary');
+            document.getElementById('careerTab').classList.remove('btn-primary');
+            document.getElementById('careerTab').classList.add('text-theme-secondary');
+            document.getElementById('projectTab').classList.remove('btn-primary');
+            document.getElementById('projectTab').classList.add('text-theme-secondary');
+            document.getElementById('searchTab').classList.remove('btn-primary');
+            document.getElementById('searchTab').classList.add('text-theme-secondary');
+            
+            // Handle footer positioning
+            const footer = document.querySelector('footer');
+            const mainContent = document.querySelector('.container');
+            
+            // Reset footer positioning
+            footer.classList.remove('footer-bottom');
+            mainContent.classList.remove('content-with-footer');
+            
+            // Show selected section and update tab
+            if (tab === 'search') {
+                document.getElementById('searchSection').classList.remove('hidden');
+                document.getElementById('searchTab').classList.add('btn-primary');
+                document.getElementById('searchTab').classList.remove('text-theme-secondary');
+                // Move footer to bottom for search section
+                footer.classList.add('footer-bottom');
+                mainContent.classList.add('content-with-footer');
+            } else if (tab === 'upload') {
+                document.getElementById('uploadSection').classList.remove('hidden');
+                document.getElementById('uploadTab').classList.add('btn-primary');
+                document.getElementById('uploadTab').classList.remove('text-theme-secondary');
+            } else if (tab === 'match') {
+                document.getElementById('matchSection').classList.remove('hidden');
+                document.getElementById('matchTab').classList.add('btn-primary');
+                document.getElementById('matchTab').classList.remove('text-theme-secondary');
+                // Move footer to bottom for match section
+                footer.classList.add('footer-bottom');
+                mainContent.classList.add('content-with-footer');
+            } else if (tab === 'career') {
+                document.getElementById('careerSection').classList.remove('hidden');
+                document.getElementById('careerTab').classList.add('btn-primary');
+                document.getElementById('careerTab').classList.remove('text-theme-secondary');
+                // Move footer to bottom for career section
+                footer.classList.add('footer-bottom');
+                mainContent.classList.add('content-with-footer');
+            } else if (tab === 'project') {
+                document.getElementById('projectSection').classList.remove('hidden');
+                document.getElementById('projectTab').classList.add('btn-primary');
+                document.getElementById('projectTab').classList.remove('text-theme-secondary');
+            }
+        }
+
+        // Resume form submission
+        document.getElementById('resumeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                name: formData.get('name'),
+                resume_text: formData.get('resume_text'),
+                preferences: formData.get('preferences') ? formData.get('preferences').split(',').map(p => p.trim()) : []
+            };
+            
+            // Show loading
+            document.getElementById('uploadLoading').classList.remove('hidden');
+            document.getElementById('uploadResult').classList.add('hidden');
+            
+            try {
+                const response = await fetch('/upload_resume', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentEmployeeId = result.employee_id;
+                    currentEmployeeData = data;
+                    
+                    // Show success message
+                    document.getElementById('uploadResult').innerHTML = `
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                            <strong>Success!</strong> Resume processed successfully.<br>
+                            <strong>Employee ID:</strong> ${result.employee_id}<br>
+                            <strong>Skills Extracted:</strong> ${result.total_skills} skills found<br>
+                            <strong>Top Skills:</strong> ${result.extracted_skills.slice(0, 5).join(', ')}
+                        </div>
+                    `;
+                    document.getElementById('uploadResult').classList.remove('hidden');
+                    
+                    // Load matches and switch to match tab
+                    await loadMatches();
+                    switchTab('match');
+                } else {
+                    throw new Error(result.detail || 'Upload failed');
+                }
+            } catch (error) {
+                document.getElementById('uploadResult').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+                document.getElementById('uploadResult').classList.remove('hidden');
+            } finally {
+                document.getElementById('uploadLoading').classList.add('hidden');
+            }
+        });
+
+        // Load project matches
+        async function loadMatches() {
+            if (!currentEmployeeId) return;
+            
+            try {
+                const response = await fetch(`/match_projects/${currentEmployeeId}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayMatches(result.matches);
+                    await loadSkillGap();
+                } else {
+                    throw new Error(result.detail || 'Failed to load matches');
+                }
+            } catch (error) {
+                console.error('Error loading matches:', error);
+            }
+        }
+
+        // Display project matches
+        function displayMatches(matches) {
+            const container = document.getElementById('matchesContainer');
+            
+            if (matches.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">No project matches found</p>';
+                return;
+            }
+            
+            // Show employee info
+            document.getElementById('employeeInfo').classList.remove('hidden');
+            document.getElementById('employeeDetails').innerHTML = `
+                <p><strong>Name:</strong> ${currentEmployeeData.name}</p>
+                <p><strong>Total Matches:</strong> ${matches.length}</p>
+            `;
+            
+            // Display matches
+            container.innerHTML = matches.map(match => `
+                <div class="card-hover bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800">${match.title}</h3>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-blue-600">${match.overall_score}%</div>
+                            <div class="text-sm text-gray-500">Overall Match</div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">${match.description}</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2">Required Skills:</h4>
+                            <div class="flex flex-wrap gap-1">
+                                ${match.required_skills.map(skill => `
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                        ${skill}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2">Team Size:</h4>
+                            <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full">${match.team_size} members</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-green-50 p-3 rounded">
+                            <h5 class="font-semibold text-green-800 mb-1">Matched Skills (${match.skill_match_percentage}%)</h5>
+                            <div class="flex flex-wrap gap-1">
+                                ${match.matched_skills.map(skill => `
+                                    <span class="px-2 py-1 bg-green-200 text-green-800 text-xs rounded">
+                                        ${skill}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="bg-red-50 p-3 rounded">
+                            <h5 class="font-semibold text-red-800 mb-1">Missing Skills</h5>
+                            <div class="flex flex-wrap gap-1">
+                                ${match.missing_skills.map(skill => `
+                                    <span class="px-2 py-1 bg-red-200 text-red-800 text-xs rounded">
+                                        ${skill}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load skill gap analysis
+        async function loadSkillGap() {
+            if (!currentEmployeeId) return;
+            
+            try {
+                const response = await fetch(`/skill_gap/${currentEmployeeId}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displaySkillGap(result);
+                }
+            } catch (error) {
+                console.error('Error loading skill gap:', error);
+            }
+        }
+
+        // Display skill gap analysis
+        function displaySkillGap(data) {
+            const skillGapAnalysis = data.skill_gap_analysis;
+            
+            if (skillGapAnalysis.missing_skills && skillGapAnalysis.missing_skills.length > 0) {
+                document.getElementById('skillGapSection').classList.remove('hidden');
+                document.getElementById('missingSkills').innerHTML = skillGapAnalysis.missing_skills.map(skill => 
+                    `<span class="inline-block px-2 py-1 bg-red-200 text-red-800 text-sm rounded mr-2 mb-1">${skill}</span>`
+                ).join('');
+            }
+            
+            if (skillGapAnalysis.matched_skills && skillGapAnalysis.matched_skills.length > 0) {
+                document.getElementById('matchedSkills').innerHTML = skillGapAnalysis.matched_skills.map(skill => 
+                    `<span class="inline-block px-2 py-1 bg-green-200 text-green-800 text-sm rounded mr-2 mb-1">${skill}</span>`
+                ).join('');
+            }
+            
+            // Display recommended courses
+            if (data.recommended_courses && data.recommended_courses.length > 0) {
+                document.getElementById('coursesSection').classList.remove('hidden');
+                document.getElementById('coursesContainer').innerHTML = data.recommended_courses.map(course => `
+                    <div class="card-hover bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <h4 class="font-semibold text-gray-800 mb-2">${course.title}</h4>
+                        <p class="text-sm text-gray-600 mb-3">${course.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-blue-600 font-medium">${course.provider}</span>
+                            <a href="${course.url}" target="_blank" 
+                               class="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+                                View Course
+                            </a>
+                        </div>
+                        <div class="mt-2">
+                            <span class="text-xs text-gray-500">Relevance: ${course.relevance_percentage}%</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Load career path (placeholder for now)
+        async function loadCareerPath() {
+            if (!currentEmployeeId) return;
+            
+            try {
+                const response = await fetch(`/career_path/${currentEmployeeId}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayCareerPath(result);
+                }
+            } catch (error) {
+                console.error('Error loading career path:', error);
+            }
+        }
+
+        // Display career path
+        function displayCareerPath(data) {
+            const container = document.getElementById('careerContent');
+            
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-blue-800 mb-2">Current Skill Level</h3>
+                        <span class="px-3 py-1 bg-blue-200 text-blue-800 rounded-full">${data.current_level}</span>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <h3 class="font-semibold text-gray-800 mb-3">Career Trajectory</h3>
+                        <div class="space-y-2">
+                            ${data.career_trajectory.map(path => `
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                                    <span class="text-gray-700">${path}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <h3 class="font-semibold text-gray-800 mb-3">Recommended Training</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${data.recommended_courses && data.recommended_courses.length > 0 ? 
+                                data.recommended_courses.map(course => `
+                                <div class="p-3 bg-gray-50 rounded">
+                                    <h4 class="font-medium text-gray-800">${course.title}</h4>
+                                    <p class="text-sm text-gray-600">${course.provider}</p>
+                                    <a href="${course.url}" target="_blank" 
+                                       class="text-blue-600 text-sm hover:underline">View Course</a>
+                                </div>
+                                `).join('') :
+                                (data.skill_gaps && data.skill_gaps.missing_skills && data.skill_gaps.missing_skills.length > 0 ?
+                                    generateSkillBasedRecommendations(data.skill_gaps.missing_skills).map(course => `
+                                        <div class="p-3 bg-gray-50 rounded">
+                                            <h4 class="font-medium text-gray-800">${course.title}</h4>
+                                            ${course.target_skill ? `<p class="text-xs text-red-600 mb-1">Targets: ${course.target_skill}</p>` : ''}
+                                            <p class="text-sm text-gray-600 mb-2">${course.description}</p>
+                                            <p class="text-xs text-gray-500 mb-2">Provider: ${course.provider}</p>
+                                            <a href="${course.url}" target="_blank" 
+                                               class="text-blue-600 text-sm hover:underline">View Course</a>
+                                        </div>
+                                    `).join('') :
+                                    `<div class="col-span-full text-center py-8 text-gray-500">
+                                        <p>No specific training recommendations available at this time.</p>
+                                        <p class="text-sm mt-2">Training recommendations will be generated based on skill gaps and career progression.</p>
+                                    </div>`
+                                )
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load career path when career tab is clicked
+        document.getElementById('careerTab').addEventListener('click', () => {
+            if (currentEmployeeId) {
+                loadCareerPath();
+            }
+        });
+
+        // Global variables for project management
+        let currentEditingProjectId = null;
+        let allProjects = [];
+
+        // Load projects when project tab is clicked
+        document.getElementById('projectTab').addEventListener('click', () => {
+            loadProjects();
+        });
+
+        // Refresh projects button
+        document.getElementById('refreshProjects').addEventListener('click', () => {
+            loadProjects();
+        });
+
+        // Apply filters button
+        document.getElementById('applyFilters').addEventListener('click', () => {
+            applyProjectFilters();
+        });
+
+        // Clear filters button
+        document.getElementById('clearFilters').addEventListener('click', () => {
+            clearProjectFilters();
+        });
+
+        // Real-time search on input
+        document.getElementById('projectNameFilter').addEventListener('input', () => {
+            applyProjectFilters();
+        });
+
+        document.getElementById('skillFilter').addEventListener('input', () => {
+            applyProjectFilters();
+        });
+
+        document.getElementById('teamSizeFilter').addEventListener('change', () => {
+            applyProjectFilters();
+        });
+
+        // Load all projects
+        async function loadProjects() {
+            document.getElementById('projectsLoading').classList.remove('hidden');
+            document.getElementById('projectsList').innerHTML = '<p class="text-gray-500 text-center">Loading projects...</p>';
+            
+            try {
+                const response = await fetch('/projects');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    allProjects = result.projects;
+                    displayProjects(allProjects);
+                } else {
+                    throw new Error(result.detail || 'Failed to load projects');
+                }
+            } catch (error) {
+                document.getElementById('projectsList').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                document.getElementById('projectsLoading').classList.add('hidden');
+            }
+        }
+
+        // Display projects list
+        function displayProjects(projects) {
+            const container = document.getElementById('projectsList');
+            
+            if (projects.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">No projects found. Add your first project below!</p>';
+                return;
+            }
+            
+            container.innerHTML = projects.map(project => `
+                <div class="bg-white border border-gray-200 rounded-lg p-4 hover:bg-blue-50 cursor-pointer transition-colors" 
+                     onclick="editProject(${project.id})">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800">${project.title}</h4>
+                            <p class="text-sm text-gray-600 mt-1">${project.description.substring(0, 100)}${project.description.length > 100 ? '...' : ''}</p>
+                            <div class="flex flex-wrap gap-1 mt-2">
+                                ${project.required_skills.map(skill => `
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                        ${skill}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="text-right ml-4">
+                            <div class="text-sm text-gray-500">Team Size</div>
+                            <div class="font-semibold text-gray-800">${project.team_size}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Apply project filters
+        function applyProjectFilters() {
+            const nameFilter = document.getElementById('projectNameFilter').value.toLowerCase().trim();
+            const skillFilter = document.getElementById('skillFilter').value.toLowerCase().trim();
+            const teamSizeFilter = document.getElementById('teamSizeFilter').value;
+            
+            let filteredProjects = [...allProjects];
+            
+            // Filter by project name
+            if (nameFilter) {
+                filteredProjects = filteredProjects.filter(project => 
+                    project.title.toLowerCase().includes(nameFilter) ||
+                    project.description.toLowerCase().includes(nameFilter)
+                );
+            }
+            
+            // Filter by skills
+            if (skillFilter) {
+                const searchSkills = skillFilter.split(',').map(skill => skill.trim().toLowerCase()).filter(skill => skill);
+                filteredProjects = filteredProjects.filter(project => {
+                    const projectSkills = project.required_skills.map(skill => skill.toLowerCase());
+                    return searchSkills.some(searchSkill => 
+                        projectSkills.some(projectSkill => projectSkill.includes(searchSkill))
+                    );
+                });
+            }
+            
+            // Filter by team size
+            if (teamSizeFilter) {
+                filteredProjects = filteredProjects.filter(project => {
+                    const teamSize = project.team_size;
+                    switch (teamSizeFilter) {
+                        case '1':
+                            return teamSize === 1;
+                        case '2-5':
+                            return teamSize >= 2 && teamSize <= 5;
+                        case '6-10':
+                            return teamSize >= 6 && teamSize <= 10;
+                        case '10+':
+                            return teamSize > 10;
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            // Display filtered results
+            displayProjects(filteredProjects);
+            
+            // Update filter summary
+            updateFilterSummary(filteredProjects.length, allProjects.length);
+        }
+
+        // Clear all filters
+        function clearProjectFilters() {
+            document.getElementById('projectNameFilter').value = '';
+            document.getElementById('skillFilter').value = '';
+            document.getElementById('teamSizeFilter').value = '';
+            
+            // Display all projects
+            displayProjects(allProjects);
+            
+            // Hide filter summary
+            document.getElementById('filterSummary').classList.add('hidden');
+        }
+
+        // Update filter summary
+        function updateFilterSummary(filteredCount, totalCount) {
+            const summaryElement = document.getElementById('filterSummary');
+            const textElement = document.getElementById('filterResultsText');
+            
+            if (filteredCount === totalCount) {
+                summaryElement.classList.add('hidden');
+            } else {
+                textElement.textContent = `Showing ${filteredCount} of ${totalCount} projects`;
+                summaryElement.classList.remove('hidden');
+            }
+        }
+
+        // Edit project function
+        function editProject(projectId) {
+            const project = allProjects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            // Set editing mode
+            currentEditingProjectId = projectId;
+            
+            // Update form title and button
+            document.getElementById('formTitle').textContent = '✏️ Edit Project';
+            document.getElementById('submitButtonText').textContent = '💾 Update Project';
+            document.getElementById('cancelEdit').classList.remove('hidden');
+            
+            // Populate form fields
+            document.getElementById('projectId').value = project.id;
+            document.getElementById('projectTitle').value = project.title;
+            document.getElementById('projectDescription').value = project.description;
+            document.getElementById('requiredSkills').value = project.required_skills.join(', ');
+            document.getElementById('teamSize').value = project.team_size;
+            
+            // Scroll to form
+            document.getElementById('projectForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cancel edit function
+        document.getElementById('cancelEdit').addEventListener('click', () => {
+            resetProjectForm();
+        });
+
+        // Reset form to add mode
+        function resetProjectForm() {
+            currentEditingProjectId = null;
+            
+            // Update form title and button
+            document.getElementById('formTitle').textContent = '➕ Add New Project';
+            document.getElementById('submitButtonText').textContent = '➕ Add Project';
+            document.getElementById('cancelEdit').classList.add('hidden');
+            
+            // Clear form
+            document.getElementById('projectForm').reset();
+            document.getElementById('projectId').value = '';
+        }
+
+        // Project form submission
+        document.getElementById('projectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                required_skills: formData.get('required_skills').split(',').map(skill => skill.trim()).filter(skill => skill),
+                team_size: parseInt(formData.get('team_size'))
+            };
+            
+            const projectId = formData.get('project_id');
+            const isEditing = projectId && projectId !== '';
+            
+            // Show loading
+            document.getElementById('projectLoading').classList.remove('hidden');
+            document.getElementById('projectResult').classList.add('hidden');
+            
+            try {
+                const url = isEditing ? `/projects/${projectId}` : '/add_project';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Show success message
+                    const action = isEditing ? 'updated' : 'added';
+                    document.getElementById('projectResult').innerHTML = `
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                            <strong>Success!</strong> Project ${action} successfully.<br>
+                            <strong>Project ID:</strong> ${result.project_id}<br>
+                            <strong>Title:</strong> ${data.title}<br>
+                            <strong>Team Size:</strong> ${data.team_size} members<br>
+                            <strong>Skills Required:</strong> ${data.required_skills.join(', ')}
+                        </div>
+                    `;
+                    document.getElementById('projectResult').classList.remove('hidden');
+                    
+                    // Reset form and reload projects
+                    resetProjectForm();
+                    loadProjects();
+                } else {
+                    throw new Error(result.detail || `Failed to ${isEditing ? 'update' : 'add'} project`);
+                }
+            } catch (error) {
+                document.getElementById('projectResult').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+                document.getElementById('projectResult').classList.remove('hidden');
+            } finally {
+                document.getElementById('projectLoading').classList.add('hidden');
+            }
+        });
+
+        // Employee search form submission
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const employeeId = document.getElementById('employeeId').value;
+            
+            // Show loading
+            document.getElementById('searchLoading').classList.remove('hidden');
+            document.getElementById('searchResult').classList.add('hidden');
+            document.getElementById('searchError').classList.add('hidden');
+            
+            try {
+                const response = await fetch(`/employee/${employeeId}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayEmployeeProfile(result.employee_profile);
+                    displayMatchHistory(result.match_history);
+                    
+                    document.getElementById('searchResult').classList.remove('hidden');
+                } else {
+                    throw new Error(result.detail || 'Employee not found');
+                }
+            } catch (error) {
+                document.getElementById('searchError').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+                document.getElementById('searchError').classList.remove('hidden');
+            } finally {
+                document.getElementById('searchLoading').classList.add('hidden');
+            }
+        });
+
+        // Display employee profile
+        function displayEmployeeProfile(profile) {
+            const container = document.getElementById('employeeDetails');
+            
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h4 class="font-semibold text-gray-800 mb-3">Employee Information</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Employee ID</p>
+                                <p class="text-lg font-semibold text-gray-800">${profile.id}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Employee Name</p>
+                                <p class="text-lg font-semibold text-gray-800">${profile.name}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg border">
+                        <h4 class="font-semibold text-gray-800 mb-3">Technical Skills</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${profile.skills.map(skill => `
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full border border-blue-200">
+                                    ${skill}
+                                </span>
+                            `).join('')}
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Total Skills: ${profile.total_skills}</p>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg border">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-semibold text-gray-800">📚 Recommended Training</h4>
+                            <button onclick="testTrainingRecommendations()" class="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">
+                                Test
+                            </button>
+                        </div>
+                        <div id="recommendedTraining" class="space-y-3">
+                            <div class="text-center py-4">
+                                <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                                <p class="mt-2 text-gray-600 text-sm">Loading training recommendations...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('employeeProfile').classList.remove('hidden');
+            
+            // Load training recommendations
+            setTimeout(() => {
+                loadTrainingRecommendations(profile.id);
+            }, 100);
+            
+            // Fallback: Show default recommendations after 2 seconds if nothing else loads
+            setTimeout(() => {
+                const container = document.getElementById('recommendedTraining');
+                if (container && container.innerHTML.includes('Loading training recommendations')) {
+                    console.log('Fallback: Showing default recommendations after timeout');
+                    displayDefaultTrainingRecommendations();
+                }
+            }, 2000);
+        }
+
+        // Load training recommendations for employee
+        async function loadTrainingRecommendations(employeeId) {
+            try {
+                console.log('Loading training recommendations for employee:', employeeId); // Debug log
+                
+                const response = await fetch(`/skill_gap/${employeeId}`);
+                const result = await response.json();
+                
+                console.log('Skill gap response:', result); // Debug log
+                console.log('Recommended courses count:', result.recommended_courses ? result.recommended_courses.length : 'undefined'); // Debug log
+                
+                // Generate training recommendations based on missing skills
+                if (result.skill_gap_analysis && result.skill_gap_analysis.missing_skills && result.skill_gap_analysis.missing_skills.length > 0) {
+                    console.log('Generating recommendations based on missing skills:', result.skill_gap_analysis.missing_skills);
+                    const skillBasedCourses = generateSkillBasedRecommendations(result.skill_gap_analysis.missing_skills);
+                    displayTrainingRecommendations(skillBasedCourses);
+                } else {
+                    // Fallback to default recommendations
+                    console.log('No missing skills found, showing default recommendations');
+                    displayDefaultTrainingRecommendations();
+                }
+                
+            } catch (error) {
+                console.error('Error loading training recommendations:', error);
+                console.log('Error occurred, showing default recommendations'); // Debug log
+                displayDefaultTrainingRecommendations();
+            }
+        }
+
+        // Generate training recommendations based on missing skills
+        function generateSkillBasedRecommendations(missingSkills) {
+            const skillToCourses = {
+                'python': {
+                    title: "Python Programming Fundamentals",
+                    description: "Master Python programming from basics to advanced concepts including data structures, functions, and object-oriented programming.",
+                    provider: "Coursera",
+                    url: "https://www.coursera.org/learn/python-programming",
+                    relevance_percentage: 95
+                },
+                'aws': {
+                    title: "AWS Cloud Practitioner Certification",
+                    description: "Learn AWS cloud services including EC2, S3, and other core AWS services for cloud computing.",
+                    provider: "AWS Training",
+                    url: "https://aws.amazon.com/training/course-descriptions/cloud-practitioner/",
+                    relevance_percentage: 90
+                },
+                'aws ec2': {
+                    title: "AWS EC2 Deep Dive",
+                    description: "Comprehensive guide to Amazon Elastic Compute Cloud (EC2) for scalable cloud computing.",
+                    provider: "AWS Training",
+                    url: "https://aws.amazon.com/training/course-descriptions/ec2/",
+                    relevance_percentage: 95
+                },
+                's3': {
+                    title: "Amazon S3 Storage Solutions",
+                    description: "Learn Amazon Simple Storage Service (S3) for scalable object storage in the cloud.",
+                    provider: "AWS Training",
+                    url: "https://aws.amazon.com/training/course-descriptions/s3/",
+                    relevance_percentage: 90
+                },
+                'django': {
+                    title: "Django Web Framework",
+                    description: "Build web applications with Django, the high-level Python web framework.",
+                    provider: "Udemy",
+                    url: "https://www.udemy.com/course/django-web-framework/",
+                    relevance_percentage: 95
+                },
+                'fastapi': {
+                    title: "FastAPI for Python Web APIs",
+                    description: "Modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints.",
+                    provider: "FastAPI Official",
+                    url: "https://fastapi.tiangolo.com/tutorial/",
+                    relevance_percentage: 95
+                },
+                'css': {
+                    title: "CSS3 Complete Guide",
+                    description: "Master CSS3 including flexbox, grid, animations, and responsive design.",
+                    provider: "Udemy",
+                    url: "https://www.udemy.com/course/css3-complete-guide/",
+                    relevance_percentage: 90
+                },
+                'html': {
+                    title: "HTML5 Complete Course",
+                    description: "Learn HTML5 from scratch including semantic elements, forms, and multimedia.",
+                    provider: "edX",
+                    url: "https://www.edx.org/learn/html5",
+                    relevance_percentage: 90
+                },
+                'tibco': {
+                    title: "TIBCO Integration Platform",
+                    description: "Learn TIBCO integration and middleware solutions for enterprise connectivity.",
+                    provider: "TIBCO Training",
+                    url: "https://www.tibco.com/training",
+                    relevance_percentage: 85
+                }
+            };
+
+            const recommendations = [];
+            const processedSkills = new Set();
+
+            // Process missing skills and generate recommendations
+            missingSkills.forEach(skill => {
+                const normalizedSkill = skill.toLowerCase().trim();
+                
+                // Skip if we've already processed this skill
+                if (processedSkills.has(normalizedSkill)) return;
+                processedSkills.add(normalizedSkill);
+
+                // Find matching course
+                let course = null;
+                
+                // Direct match
+                if (skillToCourses[normalizedSkill]) {
+                    course = skillToCourses[normalizedSkill];
+                }
+                // Partial match for AWS skills
+                else if (normalizedSkill.includes('aws') || normalizedSkill.includes('ec2') || normalizedSkill.includes('s3')) {
+                    if (normalizedSkill.includes('ec2')) {
+                        course = skillToCourses['aws ec2'];
+                    } else if (normalizedSkill.includes('s3')) {
+                        course = skillToCourses['s3'];
+                    } else {
+                        course = skillToCourses['aws'];
+                    }
+                }
+                // Python variations
+                else if (normalizedSkill.includes('python')) {
+                    course = skillToCourses['python'];
+                }
+
+                if (course) {
+                    recommendations.push({
+                        ...course,
+                        target_skill: skill
+                    });
+                }
+            });
+
+            // If no specific matches found, add general recommendations
+            if (recommendations.length === 0) {
+                recommendations.push(
+                    {
+                        title: "Full-Stack Web Development",
+                        description: "Comprehensive course covering HTML, CSS, JavaScript, and backend technologies.",
+                        provider: "Coursera",
+                        url: "https://www.coursera.org/learn/web-development",
+                        relevance_percentage: 80,
+                        target_skill: "Web Development"
+                    },
+                    {
+                        title: "Cloud Computing Fundamentals",
+                        description: "Introduction to cloud computing concepts and major cloud platforms.",
+                        provider: "edX",
+                        url: "https://www.edx.org/learn/cloud-computing",
+                        relevance_percentage: 75,
+                        target_skill: "Cloud Computing"
+                    }
+                );
+            }
+
+            return recommendations.slice(0, 5); // Return top 5 recommendations
+        }
+
+        // Display training recommendations
+        function displayTrainingRecommendations(courses) {
+            const container = document.getElementById('recommendedTraining');
+            
+            console.log('Displaying training recommendations:', courses); // Debug log
+            
+            if (!courses || courses.length === 0) {
+                console.log('No courses provided, showing default'); // Debug log
+                displayDefaultTrainingRecommendations();
+                return;
+            }
+            
+            container.innerHTML = courses.map(course => `
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <h5 class="font-semibold text-gray-800 text-sm">${course.title}</h5>
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            ${course.relevance_percentage || 85}% match
+                        </span>
+                    </div>
+                    ${course.target_skill ? `
+                        <div class="mb-2">
+                            <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+                                Targets: ${course.target_skill}
+                            </span>
+                        </div>
+                    ` : ''}
+                    <p class="text-sm text-gray-600 mb-3">${course.description}</p>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-500">Provider:</span>
+                            <span class="text-xs font-medium text-blue-600">${course.provider}</span>
+                        </div>
+                        <a href="${course.url}" target="_blank" 
+                           class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors">
+                            View Course
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Test function to manually trigger training recommendations
+        function testTrainingRecommendations() {
+            console.log('Testing training recommendations...');
+            displayDefaultTrainingRecommendations();
+        }
+
+        // Global test function for browser console
+        window.testTraining = function() {
+            console.log('Global test function called');
+            displayDefaultTrainingRecommendations();
+        };
+
+        // Test employee search function
+        window.testEmployeeSearch = function() {
+            console.log('Testing employee search...');
+            document.getElementById('employeeId').value = '6';
+            document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+        };
+
+        // Test if training section is visible
+        window.checkTrainingSection = function() {
+            const container = document.getElementById('recommendedTraining');
+            const profile = document.getElementById('employeeProfile');
+            console.log('Training container:', container);
+            console.log('Employee profile:', profile);
+            console.log('Profile visible:', profile ? !profile.classList.contains('hidden') : 'not found');
+            console.log('Container visible:', container ? container.offsetParent !== null : 'not found');
+        };
+
+        // Display default training recommendations
+        function displayDefaultTrainingRecommendations() {
+            const container = document.getElementById('recommendedTraining');
+            
+            console.log('Displaying default training recommendations'); // Debug log
+            console.log('Container element:', container); // Debug log
+            
+            if (!container) {
+                console.error('Training recommendations container not found!');
+                return;
+            }
+            
+            console.log('About to display training recommendations'); // Debug log
+            
+            const defaultCourses = [
+                {
+                    title: "Advanced Python Programming",
+                    description: "Master advanced Python concepts including decorators, generators, and async programming.",
+                    provider: "Coursera",
+                    url: "https://www.coursera.org/learn/python-programming",
+                    relevance_percentage: 90
+                },
+                {
+                    title: "React.js Complete Guide",
+                    description: "Learn React.js from basics to advanced concepts including hooks, context, and performance optimization.",
+                    provider: "Udemy",
+                    url: "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+                    relevance_percentage: 85
+                },
+                {
+                    title: "AWS Cloud Practitioner",
+                    description: "Get certified in AWS cloud services and learn about EC2, S3, and other core AWS services.",
+                    provider: "AWS Training",
+                    url: "https://aws.amazon.com/training/course-descriptions/cloud-practitioner/",
+                    relevance_percentage: 80
+                },
+                {
+                    title: "Machine Learning Fundamentals",
+                    description: "Introduction to machine learning concepts, algorithms, and practical applications.",
+                    provider: "edX",
+                    url: "https://www.edx.org/learn/machine-learning",
+                    relevance_percentage: 75
+                },
+                {
+                    title: "JavaScript ES6+ Mastery",
+                    description: "Modern JavaScript features including arrow functions, destructuring, and modules.",
+                    provider: "Pluralsight",
+                    url: "https://www.pluralsight.com/courses/javascript-es6",
+                    relevance_percentage: 70
+                }
+            ];
+            
+            container.innerHTML = `
+                <div class="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                    <p class="text-xs text-yellow-800">
+                        <strong>Note:</strong> Showing general recommendations. For personalized training based on skill gaps, upload a resume first.
+                    </p>
+                </div>
+                ${defaultCourses.map(course => `
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h5 class="font-semibold text-gray-800 text-sm">${course.title}</h5>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                ${course.relevance_percentage}% match
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">${course.description}</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs text-gray-500">Provider:</span>
+                                <span class="text-xs font-medium text-blue-600">${course.provider}</span>
+                            </div>
+                            <a href="${course.url}" target="_blank" 
+                               class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors">
+                                View Course
+                            </a>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Display match history
+        function displayMatchHistory(matchHistory) {
+            const container = document.getElementById('matchHistoryTable');
+            
+            if (matchHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <p>No match history found for this employee.</p>
+                    </div>
+                `;
+            } else {
+                // Sort matches by overall score (descending) and then by skill match percentage (descending)
+                const sortedMatches = matchHistory.sort((a, b) => {
+                    // Primary sort: overall score
+                    if (b.overall_score !== a.overall_score) {
+                        return b.overall_score - a.overall_score;
+                    }
+                    // Secondary sort: skill match percentage
+                    return b.skill_match_percentage - a.skill_match_percentage;
+                });
+                
+                // Get top 5 matches
+                const topMatches = sortedMatches.slice(0, 5);
+                
+                container.innerHTML = `
+                    <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-blue-800">
+                            <strong>Showing top 5 projects</strong> based on match score and skill compatibility
+                            ${matchHistory.length > 5 ? ` (${matchHistory.length} total matches available)` : ''}
+                        </p>
+                    </div>
+                    <div class="mb-6">
+                        <table class="min-w-full table-3d">
+                        <thead class="bg-gray-50 dark:bg-gray-800">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">Rank</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">Project</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">Match Score</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">Skill Match</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">Missing Skills</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            ${topMatches.map((match, index) => `
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center">
+                                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium
+                                                ${index === 0 ? 'bg-yellow-100 text-yellow-800' : 
+                                                  index === 1 ? 'bg-gray-100 text-gray-800' : 
+                                                  index === 2 ? 'bg-orange-100 text-orange-800' : 
+                                                  'bg-blue-100 text-blue-800'}">
+                                                ${index + 1}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div>
+                                            <div class="font-medium text-gray-900">${match.project_title}</div>
+                                            <div class="text-sm text-gray-500">Team Size: ${match.project_team_size}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                                            ${match.overall_score}%
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-sm rounded-full">
+                                            ${match.skill_match_percentage}%
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex flex-wrap gap-1">
+                                            ${match.missing_skills.slice(0, 3).map(skill => `
+                                                <span class="px-1 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                                    ${skill}
+                                                </span>
+                                            `).join('')}
+                                            ${match.missing_skills.length > 3 ? `
+                                                <span class="px-1 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                                                    +${match.missing_skills.length - 3} more
+                                                </span>
+                                            ` : ''}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm text-gray-500">
+                                        ${new Date(match.timestamp).toLocaleDateString()}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('matchHistory').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
