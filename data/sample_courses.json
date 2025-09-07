@@ -1,0 +1,107 @@
+[
+  {
+    "title": "Complete Python Bootcamp",
+    "skill_tags": ["python", "programming", "object-oriented programming", "data structures", "algorithms"],
+    "provider": "Udemy",
+    "url": "https://www.udemy.com/course/complete-python-bootcamp/",
+    "description": "Learn Python programming from scratch with hands-on projects and real-world applications."
+  },
+  {
+    "title": "React - The Complete Guide",
+    "skill_tags": ["react", "javascript", "frontend development", "component-based architecture", "hooks"],
+    "provider": "Udemy",
+    "url": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+    "description": "Master React development with modern features, hooks, and best practices for building scalable applications."
+  },
+  {
+    "title": "AWS Certified Solutions Architect",
+    "skill_tags": ["aws", "cloud computing", "cloud architecture", "infrastructure", "scalability"],
+    "provider": "AWS Training",
+    "url": "https://aws.amazon.com/training/",
+    "description": "Learn AWS cloud services and architecture patterns for designing scalable and secure applications."
+  },
+  {
+    "title": "Machine Learning with Python",
+    "skill_tags": ["machine learning", "python", "scikit-learn", "data science", "algorithms"],
+    "provider": "Coursera",
+    "url": "https://www.coursera.org/learn/machine-learning",
+    "description": "Comprehensive course on machine learning algorithms, implementation, and best practices using Python."
+  },
+  {
+    "title": "Docker and Kubernetes Mastery",
+    "skill_tags": ["docker", "kubernetes", "containerization", "devops", "orchestration"],
+    "provider": "Pluralsight",
+    "url": "https://www.pluralsight.com/courses/docker-kubernetes-big-picture",
+    "description": "Learn containerization with Docker and orchestration with Kubernetes for modern application deployment."
+  },
+  {
+    "title": "Database Design and SQL",
+    "skill_tags": ["sql", "database design", "postgresql", "mysql", "data modeling"],
+    "provider": "edX",
+    "url": "https://www.edx.org/course/database-systems",
+    "description": "Master database design principles and SQL for efficient data storage and retrieval."
+  },
+  {
+    "title": "JavaScript ES6+ Complete Guide",
+    "skill_tags": ["javascript", "es6", "modern javascript", "async programming", "promises"],
+    "provider": "FreeCodeCamp",
+    "url": "https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/",
+    "description": "Learn modern JavaScript features including ES6+, async/await, and advanced programming concepts."
+  },
+  {
+    "title": "DevOps Fundamentals",
+    "skill_tags": ["devops", "ci/cd", "jenkins", "git", "automation", "infrastructure"],
+    "provider": "Linux Academy",
+    "url": "https://linuxacademy.com/course/devops-fundamentals/",
+    "description": "Introduction to DevOps practices, tools, and methodologies for software development and deployment."
+  },
+  {
+    "title": "Data Science and Analytics",
+    "skill_tags": ["data science", "analytics", "statistics", "pandas", "numpy", "data visualization"],
+    "provider": "DataCamp",
+    "url": "https://www.datacamp.com/tracks/data-scientist-with-python",
+    "description": "Comprehensive data science curriculum covering statistics, data analysis, and visualization techniques."
+  },
+  {
+    "title": "Cybersecurity Essentials",
+    "skill_tags": ["cybersecurity", "security protocols", "penetration testing", "network security", "risk assessment"],
+    "provider": "Cybrary",
+    "url": "https://www.cybrary.it/course/cyber-security-fundamentals/",
+    "description": "Learn fundamental cybersecurity concepts, threats, and defense strategies for protecting systems and data."
+  },
+  {
+    "title": "Mobile App Development with React Native",
+    "skill_tags": ["react native", "mobile development", "ios", "android", "cross-platform"],
+    "provider": "Udemy",
+    "url": "https://www.udemy.com/course/the-complete-react-native-and-redux-course/",
+    "description": "Build native mobile applications for iOS and Android using React Native framework."
+  },
+  {
+    "title": "Blockchain Development",
+    "skill_tags": ["blockchain", "solidity", "ethereum", "smart contracts", "web3", "cryptography"],
+    "provider": "Coursera",
+    "url": "https://www.coursera.org/specializations/blockchain",
+    "description": "Learn blockchain technology, smart contract development, and decentralized application creation."
+  },
+  {
+    "title": "Cloud Security and Compliance",
+    "skill_tags": ["cloud security", "compliance", "aws security", "azure security", "risk management"],
+    "provider": "Cloud Academy",
+    "url": "https://cloudacademy.com/learning-paths/cloud-security/",
+    "description": "Master cloud security best practices, compliance requirements, and risk management strategies."
+  },
+  {
+    "title": "Advanced Python Programming",
+    "skill_tags": ["python", "advanced programming", "design patterns", "performance optimization", "testing"],
+    "provider": "Real Python",
+    "url": "https://realpython.com/",
+    "description": "Advanced Python concepts including design patterns, performance optimization, and professional development practices."
+  },
+  {
+    "title": "Full-Stack Web Development",
+    "skill_tags": ["full-stack", "web development", "html", "css", "javascript", "node.js", "database"],
+    "provider": "The Odin Project",
+    "url": "https://www.theodinproject.com/",
+    "description": "Complete full-stack web development curriculum covering frontend and backend technologies."
+  }
+]

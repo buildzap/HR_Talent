@@ -1,0 +1,62 @@
+[
+  {
+    "title": "E-commerce Platform Development",
+    "required_skills": ["python", "django", "postgresql", "react", "javascript", "aws", "docker"],
+    "team_size": 5,
+    "description": "Build a modern e-commerce platform with user authentication, payment processing, and inventory management. The platform should handle high traffic and provide excellent user experience."
+  },
+  {
+    "title": "Machine Learning Model for Customer Analytics",
+    "required_skills": ["python", "machine learning", "tensorflow", "pandas", "numpy", "sql", "data visualization"],
+    "team_size": 3,
+    "description": "Develop and deploy machine learning models to analyze customer behavior and predict purchasing patterns. The project involves data preprocessing, model training, and creating dashboards for business insights."
+  },
+  {
+    "title": "Mobile App for Healthcare Management",
+    "required_skills": ["react native", "javascript", "node.js", "mongodb", "firebase", "ios", "android"],
+    "team_size": 4,
+    "description": "Create a mobile application for healthcare providers to manage patient records, schedule appointments, and track medical history. The app must comply with healthcare data regulations."
+  },
+  {
+    "title": "DevOps Infrastructure Automation",
+    "required_skills": ["kubernetes", "docker", "terraform", "aws", "jenkins", "python", "linux"],
+    "team_size": 3,
+    "description": "Design and implement automated CI/CD pipelines and infrastructure as code for a microservices architecture. Focus on scalability, security, and monitoring."
+  },
+  {
+    "title": "Data Science Dashboard for Business Intelligence",
+    "required_skills": ["python", "r", "sql", "tableau", "power bi", "statistics", "data analysis"],
+    "team_size": 4,
+    "description": "Create interactive dashboards and reports for business stakeholders. The project involves data extraction, transformation, and visualization of key business metrics."
+  },
+  {
+    "title": "Blockchain-based Supply Chain Tracking",
+    "required_skills": ["blockchain", "solidity", "web3", "javascript", "ethereum", "smart contracts", "cryptography"],
+    "team_size": 3,
+    "description": "Develop a blockchain solution for tracking products through the supply chain. Implement smart contracts for transparency and immutability of supply chain data."
+  },
+  {
+    "title": "AI-powered Chatbot for Customer Support",
+    "required_skills": ["python", "nlp", "machine learning", "tensorflow", "api development", "natural language processing"],
+    "team_size": 3,
+    "description": "Build an intelligent chatbot that can handle customer inquiries, provide product information, and escalate complex issues to human agents."
+  },
+  {
+    "title": "Cloud Migration and Optimization",
+    "required_skills": ["aws", "azure", "cloud architecture", "migration", "python", "terraform", "monitoring"],
+    "team_size": 5,
+    "description": "Migrate legacy applications to cloud infrastructure and optimize for cost and performance. Implement monitoring and security best practices."
+  },
+  {
+    "title": "Frontend Development for SaaS Platform",
+    "required_skills": ["react", "typescript", "html", "css", "javascript", "redux", "responsive design"],
+    "team_size": 3,
+    "description": "Develop the frontend for a software-as-a-service platform with complex user interfaces, real-time updates, and responsive design for multiple devices."
+  },
+  {
+    "title": "Cybersecurity Assessment and Implementation",
+    "required_skills": ["cybersecurity", "penetration testing", "security protocols", "python", "linux", "network security"],
+    "team_size": 4,
+    "description": "Conduct security assessments, implement security measures, and develop incident response procedures for enterprise systems."
+  }
+]
